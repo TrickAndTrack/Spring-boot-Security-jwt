@@ -1,25 +1,7 @@
 package com.security.models;
 
-import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+public enum Role {
 
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@Entity
-@Table(name = "roles")
-public class Role {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Integer id;
-
-  @Enumerated(EnumType.STRING)
-  @Column(length = 20)
-  private ERole name;
-
-
+    ROLE_USER,
+    ROLE_ADMIN
 }

@@ -7,21 +7,35 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+
+
+import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
   @Autowired
-  UserRepository userRepository;
+  private UserRepository repository;
+
+  @Autowired
+  private PasswordEncoder encoder;
 
   @Override
-  @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-    User us = userRepository.findByUsername(username)
-        .orElseThrow(() -> new UsernameNotFoundException("User Not Found with username: " + username));
 
-    return UserDetailsImpl.build(us);
+    Optional<User> userDetail = repository.findByUsername(username);
+
+    // Converting userDetail to UserDetails
+    return userDetail.map(UserDetailsImpl::new)
+            .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
   }
+
+  public String addUser(User user) {
+    user.setPassword(encoder.encode(user.getPassword()));
+    repository.save(user);
+    return "User Added Successfully";
+  }
+
 
 }
